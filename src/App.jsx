@@ -20,7 +20,6 @@ function App() {
       <CoffeeForm/>
       {/* If authenticated, show autheticated content*/}
       {isAuthenticated && (authenticatedContent)}
-      <Layout/>
     </Layout>
   )
 }
