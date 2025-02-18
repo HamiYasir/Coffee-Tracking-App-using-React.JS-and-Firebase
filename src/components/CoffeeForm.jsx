@@ -1,19 +1,35 @@
 import { coffeeOptions } from '../utils'
 import { useState } from 'react'
 
-export default function CoffeeForm(){
+import Modal from './Modal'
+import Authentication from './Authentication'
+
+export default function CoffeeForm(props){
+    const { isAuthenticated } = props
+
     const [selectedCoffee, setSelectedCoffee] = useState(null)
     const [showCoffeeTypes, setShowCoffeeTypes] = useState(false)
     const [coffeeCost, setCoffeeCost] = useState(0)
     const [hour, setHour] = useState(0)
     const [minute, setMinute] = useState(0)
+    const [showModal, setShowModal] = useState(false)
 
     function handleSubmitForm(){
+        if(!isAuthenticated){
+            setShowModal(true)
+            return
+        }
         console.log(selectedCoffee, coffeeCost, hour, minute);
     }
 
     return(
         <>
+            {showModal && (
+                <Modal handleCloseModal={()=>{setShowModal(false)}}>
+                    <Authentication/>
+                </Modal>
+            )}
+            
             <div className="section-header">
                 <i className="fa-solid fa-pencil"/>
                 <h2>Start Tracking Today</h2>
