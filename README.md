@@ -7,6 +7,9 @@ This project is done as part of Smolijames 8hrs React.Js Tutorial and is the thi
 ## THINGS I WILL BE LEARNING FROM THIS PROJECT:
 
 - Working with Firebase
+- Learning how to work with Context hook
+- Working with authentication(login/signup) page in React.Js
+- Working with .env file
 
 ## FRAMEWORKS AND OTHER RESOURCES USED IN THIS PROJECT:
 
