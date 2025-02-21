@@ -19,6 +19,6 @@ Firebase - https://console.firebase.google.com/u/1/
 
 ### DEPLOYMENT
 
-This app has been deployed at  
+This app has been deployed at https://coffee-go.netlify.app/
 
 You can check it out there. Enjoy :)
