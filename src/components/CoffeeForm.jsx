@@ -1,11 +1,16 @@
 import { coffeeOptions } from '../utils'
 import { useState } from 'react'
+import { doc, setDoc } from 'firebase/firestore'
+import { useAuth } from '../context/AuthContext'
+import { db } from '../../firebase'
 
 import Modal from './Modal'
 import Authentication from './Authentication'
 
 export default function CoffeeForm(props){
     const { isAuthenticated } = props
+
+    const { globalData, setGlobalData, globalUser } = useAuth();
 
     const [selectedCoffee, setSelectedCoffee] = useState(null)
     const [showCoffeeTypes, setShowCoffeeTypes] = useState(false)
@@ -14,19 +19,56 @@ export default function CoffeeForm(props){
     const [minute, setMinute] = useState(0)
     const [showModal, setShowModal] = useState(false)
 
-    function handleSubmitForm(){
+    async function handleSubmitForm(){
         if(!isAuthenticated){
             setShowModal(true)
             return
         }
-        console.log(selectedCoffee, coffeeCost, hour, minute);
+
+        try{
+            // Define a guard clause that only submits  the form if it is completed
+            if(!selectedCoffee){return}
+
+            // then create a new data object
+            const newGlobalData = {...(globalData || {})}
+
+            const nowTime = Date.now();
+            const timeToSubtract = (hour * 60 * 60 * 60 * 1000) + (minute * 60 * 100)
+            const timeStamp = nowTime - timeToSubtract
+            
+            const newData = {
+                name: selectedCoffee,
+                cost: coffeeCost
+            }
+            newGlobalData[timeStamp] = newData
+
+            // update the global state
+            setGlobalData(newGlobalData)
+
+            // persist the data in the firebase firestore
+            const userRef = doc(db, 'users', globalUser.uid) // create a referece to wherever we are going to be writing into 
+            const res = await setDoc(userRef, {
+                [timeStamp]: newData
+            }, {merge: true}) // The "merge: true" will make it so that the existing database is merged with new database instead of replaccing it
+       
+            setSelectedCoffee(0)
+            setHour(0)
+            setMinute(0)
+            setCoffeeCost(0)
+        }catch(error){
+            console.log(error.message)
+        }
+    }
+
+    function handleCloseModal(){
+        setShowModal(false);
     }
 
     return(
         <>
             {showModal && (
-                <Modal handleCloseModal={()=>{setShowModal(false)}}>
-                    <Authentication handleCloseModal={()=>{setShowModal(false)}}/>
+                <Modal handleCloseModal={()=>{handleCloseModal}}>
+                    <Authentication handleCloseModal={()=>{handleCloseModal}}/>
                 </Modal>
             )}
             
@@ -53,7 +95,7 @@ export default function CoffeeForm(props){
                             setShowCoffeeTypes(true)
                             setSelectedCoffee(null)
                         }} 
-                        className={'button-card '+( showCoffeeTypes ? ' coffee-button-selected' : ' ')}>
+                        className={'button-card '+ (showCoffeeTypes ? ' coffee-button-selected' : ' ')}>
                     <h4>Other</h4>
                     <p>N/A</p>
                 </button>

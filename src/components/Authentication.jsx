@@ -16,6 +16,7 @@ export default function Authentication(props){
         if(!email || !email.includes('@') || !password || password.length < 6 || isAuthenticating){return}
 
         try{
+            console.log("Try Block Triggered")
             setIsAuthenticating(true)
             setError(null)
             if(isRegistration){
@@ -27,19 +28,21 @@ export default function Authentication(props){
             }
             handleCloseModal()
         }catch(err){
-            setError(err.message)
-            console.log(err.message)
+            // console.log("Catch Block Triggered")
+            console.log("Error Occured: ", err.message)
+            setError(err.message || "Random Error occured")
         }finally{
+            console.log("Finally Block Triggered")
             setIsAuthenticating(false)
         }
     }
 
     return(
         <>
-            <h2 className="sign-up-text">{(isRegistration? 'Sign Up' : 'Login')}</h2>
+            <h2 className="sign-up-text">{(isRegistration ? 'Sign Up' : 'Login')}</h2>
             <p>{(isRegistration ? 'Create an account' : 'Sign in to your account')}</p>
-            {error && (
-                <p>
+            {error && 
+                (<p>
                     {error}
                 </p>
             )}
